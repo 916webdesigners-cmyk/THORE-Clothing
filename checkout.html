@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0b0b"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/styles.css"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 fill=%27%23111%27/%3E%3Cpath d=%27M18 3 8 18h7l-2 11 11-16h-7z%27 fill=%27%23e6dfd1%27/%3E%3C/svg%3E"><title>Checkout — THORE</title></head>
+<body data-page="checkout">
+<div id="root"></div>
+<script src="js/products.js"></script><script src="js/garments.js"></script><script src="js/app.js"></script>
+<script>
+(function(){
+  const C=THORE_CONFIG,$=THORE.$,root=document.getElementById('root'),money=THORE.money;
+  let ship='standard';
+  const totals=()=>{const sub=THORE.cart.subtotal(),s=sub===0?0:(sub>=C.freeShippingOver&&ship==='standard'?0:C.shipping[ship]),tax=Math.round(sub*C.taxRate*100)/100;return{sub,s,tax,total:sub+s+tax}};
+  function summary(){
+    const t=totals();
+    return '<div>'+THORE.cart.items().map(i=>{const p=THORE.bySlug(i.slug);return '<div class="sum-i"><div class="t">'+garmentSVG(p,i.color)+'<b>'+i.qty+'</b></div><div><h4>'+p.name+'</h4><p>'+THORE_COLORS[i.color].name+' · '+i.size+'</p></div><span>'+money(p.price*i.qty)+'</span></div>'}).join('')+
+    '<div style="border-top:1px solid var(--line);margin-top:24px;padding-top:18px"><div class="row"><span>Subtotal</span><span>'+money(t.sub)+'</span></div><div class="row"><span>Shipping</span><span>'+(t.s?money(t.s):'Free')+'</span></div><div class="row"><span>Estimated tax</span><span>'+money(t.tax)+'</span></div><div class="row tot"><span>Total</span><span>'+money(t.total)+'</span></div></div></div>';
+  }
+  function fld(id,label,type,extra){return '<div class="fld"><input id="'+id+'" name="'+id+'" type="'+(type||'text')+'" placeholder=" " required '+(extra||'')+'><label for="'+id+'">'+label+'</label></div>'}
+  function render(){
+    if(!THORE.cart.items().length){root.innerHTML='<div class="done"><div><p class="eyebrow">Checkout</p><h1 class="display">Your bag is empty</h1><p>Add something to your bag to check out.</p><a class="btn solid" href="shop.html">Shop all</a></div></div>';return}
+    root.innerHTML='<div class="co"><form class="co-l" id="form" novalidate>'+
+        '<h2>Contact</h2><div class="f">'+fld('email','Email','email','autocomplete="email"')+'</div>'+
+    '<h2>Shipping address</h2><div class="f"><div class="f two">'+fld('fn','First name','text','autocomplete="given-name"')+fld('ln','Last name','text','autocomplete="family-name"')+'</div>'+fld('addr','Address','text','autocomplete="street-address"')+fld('apt','Apartment, suite (optional)','text').replace(' required','')+
+    '<div class="f three">'+fld('city','City','text','autocomplete="address-level2"')+fld('state','State','text','autocomplete="address-level1"')+fld('zip','ZIP','text','autocomplete="postal-code" inputmode="numeric"')+'</div></div>'+
+    '<h2>Delivery</h2><div id="ship"><label class="opt on"><span><input type="radio" name="ship" value="standard" checked>Standard<small>3–6 business days</small></span><span id="p1"></span></label><label class="opt"><span><input type="radio" name="ship" value="express">Express<small>1–3 business days</small></span><span>'+money(C.shipping.express)+'</span></label></div>'+
+    '<h2>Payment</h2><div class="f">'+fld('cc','Card number','text','inputmode="numeric" autocomplete="cc-number" maxlength="19"')+'<div class="f two">'+fld('exp','Expiry (MM/YY)','text','inputmode="numeric" autocomplete="cc-exp" maxlength="5"')+fld('cvc','CVC','text','inputmode="numeric" autocomplete="cc-csc" maxlength="4"')+'</div></div>'+
+    '<p class="note">Demo checkout: no payment is processed and no card data leaves this page.</p>'+
+    '<button class="btn solid full" id="pay" style="margin-top:28px">Place order</button></form>'+
+    '<aside class="co-r" id="side"></aside></div>';
+    paint();
+    document.querySelectorAll('input[name=ship]').forEach(r=>r.onchange=()=>{ship=r.value;document.querySelectorAll('.opt').forEach(o=>o.classList.toggle('on',o.querySelector('input').checked));paint()});
+    $('#cc').oninput=e=>e.target.value=e.target.value.replace(/\D/g,'').slice(0,16).replace(/(.{4})/g,'$1 ').trim();
+    $('#exp').oninput=e=>{let v=e.target.value.replace(/\D/g,'').slice(0,4);e.target.value=v.length>2?v.slice(0,2)+'/'+v.slice(2):v};
+    $('#form').onsubmit=submit;
+  }
+  function paint(){const t=totals();$('#side').innerHTML=summary();$('#p1').textContent=t.sub>=C.freeShippingOver?'Free':money(C.shipping.standard);$('#pay').textContent='Place order — '+money(t.total)}
+  function submit(e){
+    e.preventDefault();let bad=false;
+    document.querySelectorAll('#form input[required]').forEach(i=>{const v=i.value.trim();let ok=!!v;if(i.id==='email')ok=/^\S+@\S+\.\S+$/.test(v);if(i.id==='cc')ok=v.replace(/\s/g,'').length>=15;if(i.id==='exp')ok=/^\d\d\/\d\d$/.test(v);if(i.id==='cvc')ok=v.length>=3;i.parentNode.classList.toggle('err',!ok);if(!ok)bad=true});
+    if(bad){THORE.toast('Please check the highlighted fields');const f=document.querySelector('.err input');f&&f.focus();return}
+    const n='TH-'+Math.floor(100000+Math.random()*900000),email=$('#email').value;
+    try{localStorage.setItem('thore.lastOrder',JSON.stringify({n,items:THORE.cart.items(),total:totals().total}))}catch(x){}
+    THORE.cart.clear();
+    root.innerHTML='<div class="done"><div><p class="eyebrow">Order '+n+'</p><h1 class="display">Thank you.</h1><p>Your order is confirmed. A receipt is on its way to '+email.replace(/</g,'&lt;')+'.</p><a class="btn solid" href="index.html">Back to THORE</a></div></div>';scrollTo(0,0);
+  }
+  render();
+})();
+</script></body></html>

@@ -1,0 +1,55 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0b0b"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/styles.css"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 fill=%27%23111%27/%3E%3Cpath d=%27M18 3 8 18h7l-2 11 11-16h-7z%27 fill=%27%23e6dfd1%27/%3E%3C/svg%3E"><title>THORE — Heavyweight. Oversized. Made to last.</title><meta name="description" content="THORE premium oversized hoodies, uncuffed sweatpants and boxy tees."></head>
+<body data-page="home">
+<section class="hero" id="top">
+  <canvas id="hero-canvas" aria-hidden="true"></canvas><video id="hero-video" muted loop playsinline autoplay hidden aria-hidden="true"></video>
+  <div class="hero-c">
+    <p class="eyebrow">The Vaulted Edit · Season 01</p>
+    <h1 class="mark" aria-label="THORE"><span>T</span><span>H</span><span>O</span><span>R</span><span>E</span></h1>
+    <p class="hero-sub">Heavyweight. Oversized. Made to last.</p>
+    <div class="hero-cta"><a class="btn solid" href="shop.html">Shop the collection</a><a class="btn ghost" href="shop.html?c=hoodies">Hoodies</a></div>
+  </div>
+  <div class="scrollcue"><span>Scroll</span><i></i></div>
+</section>
+
+<div class="marquee" aria-hidden="true"><div>
+  <span>Oversized hoodies</span><em>✦</em><span>Uncuffed sweatpants</span><em>✦</em><span>Boxy heavyweight tees</span><em>✦</em><span>Garment dyed</span><em>✦</em><span>Built to last</span><em>✦</em>
+  <span>Oversized hoodies</span><em>✦</em><span>Uncuffed sweatpants</span><em>✦</em><span>Boxy heavyweight tees</span><em>✦</em><span>Garment dyed</span><em>✦</em><span>Built to last</span><em>✦</em>
+</div></div>
+
+<section class="section"><div class="wrap">
+  <div class="sec-h reveal"><div><p class="eyebrow">Shop by category</p><h2 class="display">The Essentials</h2></div><a class="link" href="shop.html">View all</a></div>
+  <div class="tiles" id="tiles"></div>
+</div></section>
+
+<section class="section" style="padding-top:0"><div class="wrap">
+  <div class="sec-h reveal"><div><p class="eyebrow">New &amp; bestselling</p><h2 class="display">Featured</h2></div><a class="link" href="shop.html">Shop all</a></div>
+  <div class="grid" id="featured"></div>
+</div></section>
+
+<section class="wrap"><div class="fit reveal">
+  <div><span class="eyebrow">01 — Hoodies</span><b>Oversized, never sloppy</b><p>Dropped shoulders, a roomy hood and a boxy body in 480 GSM fleece that holds its shape.</p></div>
+  <div><span class="eyebrow">02 — Sweatpants</span><b>Uncuffed. Wide. Long.</b><p>A straight open hem that falls over your shoes. No cuff, no taper — just drape.</p></div>
+  <div><span class="eyebrow">03 — Tees</span><b>Boxy heavyweight jersey</b><p>A cropped, wide-sleeved tee with a thick ribbed collar and a statement back print.</p></div>
+</div></section>
+
+<section class="section"><div class="wrap edit">
+  <div class="big reveal" id="editArt"></div>
+  <div class="reveal"><p class="eyebrow">The uniform</p><h2 class="display">Built in heavy,<br>cut for today.</h2>
+    <p>THORE is a studio for the pieces you reach for first. Heavyweight cotton, garment-dyed colour and silhouettes tuned to how clothes are worn right now — oversized up top, wide and uncuffed below.</p>
+    <div class="feats"><div>Fleece weight<span>450 – 480 GSM</span></div><div>Fabric<span>100% brushed cotton</span></div><div>Finish<span>Garment dyed, enzyme washed</span></div><div>Fit<span>Oversized / boxy</span></div></div>
+    <a class="btn solid" style="margin-top:34px" href="shop.html">Shop the uniform</a></div>
+</div></section>
+
+<section class="statement wrap"><p class="eyebrow reveal">Join the vault</p><h2 class="display reveal">First access to every <em>drop.</em></h2>
+  <form class="news reveal" onsubmit="event.preventDefault();THORE.toast('You’re on the list');this.reset()"><input type="email" required placeholder="Email address" aria-label="Email"><button>Subscribe</button></form></section>
+
+<script src="js/products.js"></script><script src="js/garments.js"></script><script src="js/app.js"></script><script src="js/hero.js"></script>
+<script>
+(function(){
+  const P=THORE_PRODUCTS, T=[['hoodies','Hoodies',P[0],'obsidian'],['sweatpants','Sweatpants',P[2],'bone'],['tees','Tees',P[4],'ash']];
+  document.getElementById('tiles').innerHTML=T.map(t=>'<a class="tile reveal" href="shop.html?c='+t[0]+'"><div class="art">'+garmentSVG(t[2],t[3])+'</div><div class="cap"><h3>'+t[1]+'</h3><small>Shop →</small></div></a>').join('');
+  document.getElementById('featured').innerHTML=[P[0],P[2],P[4],P[1],P[3],P[5]].map(p=>THORE.card(p)).join('');
+  document.getElementById('editArt').innerHTML='<div class="a">'+garmentSVG(P[0],'bone')+'</div><div class="b">'+garmentSVG(P[2],'obsidian')+'</div>';
+  THORE.observe();
+})();
+</script></body></html>

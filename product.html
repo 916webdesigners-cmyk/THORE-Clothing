@@ -1,0 +1,37 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0b0b"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/styles.css"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 fill=%27%23111%27/%3E%3Cpath d=%27M18 3 8 18h7l-2 11 11-16h-7z%27 fill=%27%23e6dfd1%27/%3E%3C/svg%3E"><title>Product — THORE</title></head>
+<body data-page="product">
+<main class="wrap"><div class="pdp" id="pdp"></div>
+<section class="section"><div class="sec-h"><div><p class="eyebrow">Complete the look</p><h2 class="display">You may also like</h2></div></div><div class="grid four" id="more"></div></section></main>
+<script src="js/products.js"></script><script src="js/garments.js"></script><script src="js/app.js"></script>
+<script>
+(function(){
+  const q=new URLSearchParams(location.search), p=THORE.bySlug(q.get('p'))||THORE_PRODUCTS[0];
+  let color=p.colors.includes(q.get('c'))?q.get('c'):p.colors[0], view='front', size=null;
+  document.title=p.name+' — THORE';
+  const views=['front','back','detail'];
+  const sizeRows={hoodie:[['XS',66,56],['S',68,58],['M',70,60],['L',72,62],['XL',74,64],['XXL',76,66]],sweats:[['XS',100,70],['S',102,72],['M',104,74],['L',106,76],['XL',108,78],['XXL',110,80]],tee:[['XS',64,56],['S',66,58],['M',68,60],['L',70,62],['XL',72,64],['XXL',74,66]]}[p.type];
+  const cols=p.type==='sweats'?['Size','Inseam (cm)','Waist (cm)']:['Size','Length (cm)','Chest 1/2 (cm)'];
+  function draw(){
+    const d=THORE.isDark(color)?' d':'';
+    document.getElementById('pdp').innerHTML=
+    '<div class="gal"><div class="thumbs">'+views.map(v=>'<button class="'+(v===view?'on':'')+'" data-v="'+v+'" aria-label="'+v+' view">'+garmentSVG(p,color,v)+'</button>').join('')+'</div>'+
+    '<div class="stage'+d+'"><div class="v">'+garmentSVG(p,color,view)+'</div></div></div>'+
+    '<div class="info"><p class="eyebrow">'+p.category+(p.badge?' · '+p.badge:'')+'</p><h1 class="display">'+p.name+'</h1><p class="pr">'+THORE.money(p.price)+'</p><p class="bl">'+p.blurb+'</p>'+
+    '<div class="lbl"><span>Colour</span><b>'+THORE_COLORS[color].name+'</b></div><div class="swatches">'+p.colors.map(c=>'<button class="sw '+(c===color?'on':'')+'" data-c="'+c+'" style="background:'+THORE_COLORS[c].hex+'" aria-label="'+THORE_COLORS[c].name+'"></button>').join('')+'</div>'+
+    '<div class="lbl"><span>Size</span><a class="link-b" href="#size-guide" onclick="document.getElementById(\'sg\').open=true">Size guide</a></div><div class="sizes">'+THORE_SIZES.map(s=>'<button class="size '+(s===size?'on':'')+'" data-s="'+s+'">'+s+'</button>').join('')+'</div>'+
+    '<button class="btn solid full" id="add" style="margin-top:28px">'+(size?'Add to bag — '+THORE.money(p.price):'Select a size')+'</button>'+
+    '<p class="note">Complimentary shipping over '+THORE.money(THORE_CONFIG.freeShippingOver)+' · 30-day returns</p>'+
+    '<div class="acc"><details open><summary>Details</summary><div class="c"><ul>'+p.details.map(x=>'<li>'+x+'</li>').join('')+'</ul></div></details>'+
+    '<details><summary>Fit</summary><div class="c">'+p.fit+'</div></details>'+
+    '<details id="sg"><summary>Size guide</summary><div class="c"><table class="sz"><tr>'+cols.map(c=>'<th>'+c+'</th>').join('')+'</tr>'+sizeRows.map(r=>'<tr>'+r.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</table></div></details>'+
+    '<details><summary>Shipping &amp; returns</summary><div class="c">Standard shipping 3–6 business days. Express 1–3 business days. Unworn items may be returned within 30 days for a full refund.</div></details></div></div>';
+    const r=document.getElementById('pdp');
+    r.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{view=b.dataset.v;draw()});
+    r.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{color=b.dataset.c;history.replaceState(0,'','?p='+p.slug+'&c='+color);draw()});
+    r.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{size=b.dataset.s;draw()});
+    document.getElementById('add').onclick=()=>{if(!size){THORE.toast('Please select a size');return}THORE.cart.add(p.slug,color,size)};
+  }
+  draw();
+  document.getElementById('more').innerHTML=THORE_PRODUCTS.filter(x=>x.slug!==p.slug).slice(0,4).map(x=>THORE.card(x)).join('');THORE.observe();
+})();
+</script></body></html>
